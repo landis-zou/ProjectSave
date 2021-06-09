@@ -2,20 +2,49 @@
 # !/usr/bin/python
 # coding=utf-8
 
-import xlrd
 import PythonFile
+import xlrd
 import json
+import xml.dom.minidom
 import os
 import codecs
 import ctypes
+import time
+from tkinter import messagebox
 from tkinter import *
 from tkinter.filedialog import (askopenfilename, askdirectory)
 
 
 # -------------------------------- ExcelToJson Tool ---------------------------------------
 
+def dealExcelDataToXml():
+    xmlData = readExcelData(r'' + PythonFile.testfile)
+    ori_data = xmlData.sheets()[0]
+    nrows = ori_data.nrows
+    ncols = ori_data.ncols
 
-def dealExcelData():
+    doc = xml.dom.minidom.Document()
+    info = doc.createElement('info')
+    doc.appendChild(info)
+
+    for nrow in range(1, nrows):
+        item = doc.createElement('item')
+        for ncol in range(0, ncols):
+            key = ori_data.cell(0, ncol).value
+            value = ori_data.cell(nrow, ncol).value
+            if isinstance(value, float):
+                value = '%0d' % value
+            item.setAttribute(key.encode('utf-8').decode('unicode_escape'), value.encode('utf-8').decode('unicode_escape'))
+
+        info.appendChild(item)
+
+    f = codecs.open('E:/Test_Save/123.xml', 'w', "utf-8")
+    f.write(doc.toprettyxml())
+    f.close()
+
+
+
+def dealExcelDataToJson():
     workbook = xlrd.open_workbook(r'' + PythonFile.testfile)
     ori_data = workbook.sheet_by_name(workbook.sheet_names()[0])
     info_name = ori_data.row_values(0)
@@ -50,7 +79,8 @@ def saveFile(file_path, file_name, data):
     output.close()
 
 
-# dealExcelData()
+# dealExcelDataToJson()
+dealExcelDataToXml()
 # ---------------------------------------------------------------------------------------
 
 
@@ -72,13 +102,28 @@ def outputPath(output_path):
 
 
 def encryptFilePath(enter_path):
+    messagebox.showinfo('提示','暂未支持加密功能，敬请期待')
+    return
     enter_path.set(askopenfilename())
 
 
 def refreshencryptBtn(encrypt_btn, encrypt_btn_state):
     state = NORMAL if encrypt_btn_state.get() == 1 else DISABLED
     encrypt_btn['state'] = state
+    showLogInfo('123')
 
+
+def showLogInfo(info):
+    toast_info_textUI.config(state=NORMAL)
+    realtime = time.strftime("%Y-%m-%d %H:%M:%S")
+    text_var = realtime + '    ' + info + '\n'
+    toast_info_textUI.insert('end', text_var)
+    toast_info_textUI.see(END)
+    toast_info_textUI.config(state=DISABLED)
+
+
+def startChangeExcel():
+    showLogInfo(123)
 
 def onGUI():
     excel_path = StringVar()
@@ -101,26 +146,27 @@ def onGUI():
     encrypt_btn.grid(row=2, column=2)
     Checkbutton(window, text='是否加密', variable=encrypt_btn_state, command=lambda: refreshencryptBtn(encrypt_btn, encrypt_btn_state), onvalue=1, offvalue=0).grid(row=2, column=3)
 
-    toast_info_lab = Label(window,width=10,height=20)
-    toast_info_lab.grid(row=3, column=0)
+
+
+    global toast_info_textUI
+    toast_info_textUI = Text(window, width=50)
+    toast_info_textUI.grid(row=4, column=0,columnspan=4)
 
 
 def onCreateWindow():
+    window.title("Table Tool")
+    # -------- 状态栏显示的应用图标
     my_ppid = 'company.product.version'
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(my_ppid)
-    window.title("Table Tool")
     window.iconbitmap(default=os.getcwd() + '/Resources/Icon/GetRight.ico')
+    # -------- 状态栏显示的应用图标
     window.geometry()
     onGUI()
     window.mainloop()
 
 
-# def showLogInfo(result):
-
 
 window = Tk()
-
-toast_info_lab = None
 
 onCreateWindow()
 
