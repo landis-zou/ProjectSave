@@ -12,6 +12,7 @@ import ctypes
 import time
 from tkinter import messagebox
 from tkinter import *
+from tkinter import ttk
 from tkinter.filedialog import (askopenfilename, askdirectory)
 
 
@@ -20,27 +21,25 @@ from tkinter.filedialog import (askopenfilename, askdirectory)
 def dealExcelDataToXml():
     xmlData = readExcelData(r'' + PythonFile.testfile)
     ori_data = xmlData.sheets()[0]
-    nrows = ori_data.nrows
+    ori_nrows = ori_data.nrows
     ncols = ori_data.ncols
 
     doc = xml.dom.minidom.Document()
     info = doc.createElement('info')
     doc.appendChild(info)
 
-    for nrow in range(1, nrows):
+    for nrow in range(1, ori_nrows):
         item = doc.createElement('item')
         for ncol in range(0, ncols):
             key = ori_data.cell(0, ncol).value
             value = ori_data.cell(nrow, ncol).value
             if isinstance(value, float):
                 value = '%0d' % value
-            item.setAttribute(key.encode('utf-8').decode('unicode_escape'), value.encode('utf-8').decode('unicode_escape'))
+            item.setAttribute(key, value)
 
         info.appendChild(item)
 
-    f = codecs.open('E:/Test_Save/123.xml', 'w', "utf-8")
-    f.write(doc.toprettyxml())
-    f.close()
+    saveFile('E:/Test_Save', '123', doc.toprettyxml(), "xml")
 
 
 
@@ -61,7 +60,7 @@ def dealExcelDataToJson():
         new_data[ori_data.row_values(i)[0]] = new_cow_data
 
     json_data = json.dumps(new_data, indent=4, sort_keys=True).encode("utf-8").decode('unicode_escape')
-    saveFile('E:/Test_Save', '123', json_data)
+    saveFile('E:/Test_Save', '123', json_data, "json")
 
 
 def readExcelData(file_path):
@@ -73,14 +72,14 @@ def readExcelData(file_path):
         return None
 
 
-def saveFile(file_path, file_name, data):
-    output = codecs.open(file_path + "/" + file_name + ".json", 'w', "utf-8")
+def saveFile(file_path, file_name, data, filetype):
+    output = codecs.open(file_path + "/" + file_name + "." + filetype, 'w', "utf-8")
     output.write(data)
     output.close()
 
 
 # dealExcelDataToJson()
-dealExcelDataToXml()
+# dealExcelDataToXml()
 # ---------------------------------------------------------------------------------------
 
 
@@ -102,7 +101,7 @@ def outputPath(output_path):
 
 
 def encryptFilePath(enter_path):
-    messagebox.showinfo('提示','暂未支持加密功能，敬请期待')
+    messagebox.showinfo('提示','暂未支持数据加密，敬请期待')
     return
     enter_path.set(askopenfilename())
 
@@ -124,6 +123,11 @@ def showLogInfo(info):
 
 def startChangeExcel():
     showLogInfo(123)
+
+
+def comboxClick(datatype):
+    showLogInfo(datatype)
+
 
 def onGUI():
     excel_path = StringVar()
@@ -147,10 +151,17 @@ def onGUI():
     Checkbutton(window, text='是否加密', variable=encrypt_btn_state, command=lambda: refreshencryptBtn(encrypt_btn, encrypt_btn_state), onvalue=1, offvalue=0).grid(row=2, column=3)
 
 
+    comvalue = StringVar()
+    comboxlist = ttk.Combobox(window, width=8, state='readonly', textvariable=comvalue)
+    comboxlist["values"] = ("json", "xml")
+    comboxlist.current(0)
+    comboxlist.grid(row=3, column=3)
+
+    Button(window, width=35, text="开始转换", command=lambda: comboxClick(comvalue.get())).grid(row=3, column=0, columnspan=3)
 
     global toast_info_textUI
-    toast_info_textUI = Text(window, width=50)
-    toast_info_textUI.grid(row=4, column=0,columnspan=4)
+    toast_info_textUI = Text(window, width=50, state=DISABLED)
+    toast_info_textUI.grid(row=4, column=0, columnspan=4)
 
 
 def onCreateWindow():
