@@ -15,24 +15,29 @@ from tkinter import *
 from tkinter import ttk
 from tkinter.filedialog import (askopenfilename, askdirectory)
 
+# -------------------------------- 公共变量 ---------------------------------------
+show_toast_Lab = None                   # UI上界面显示Log日志
+pub_folder_select_type = None               # 文件类型选择,是文件还是文件夹整个转化
+pub_excel_path_input = None                 # Excel输入路径
+pub_data_path_output = None                 # 转化文件输出路径
+pub_encrypt_file_path = None                # 加密文件路径
+pub_data_convert_type = None                # 转化类型选择
 
 # -------------------------------- ExcelToJson Tool ---------------------------------------
 
-def dealExcelDataToXml():
-    xmlData = readExcelData(r'' + PythonFile.testfile)
+def dealExcelDataToXml(excel_file):
+    xmlData = readExcelData(r'' + excel_file)
     ori_data = xmlData.sheets()[0]
-    ori_nrows = ori_data.nrows
-    ncols = ori_data.ncols
 
     doc = xml.dom.minidom.Document()
     info = doc.createElement('info')
     doc.appendChild(info)
 
-    for nrow in range(1, ori_nrows):
+    for data_nrow in range(1, ori_data.nrows):
         item = doc.createElement('item')
-        for ncol in range(0, ncols):
-            key = ori_data.cell(0, ncol).value
-            value = ori_data.cell(nrow, ncol).value
+        for data_ncol in range(0, ori_data.ncols):
+            key = ori_data.cell(0, data_ncol).value
+            value = ori_data.cell(data_nrow, data_ncol).value
             if isinstance(value, float):
                 value = '%0d' % value
             item.setAttribute(key, value)
@@ -43,8 +48,8 @@ def dealExcelDataToXml():
 
 
 
-def dealExcelDataToJson():
-    workbook = xlrd.open_workbook(r'' + PythonFile.testfile)
+def dealExcelDataToJson(excel_file):
+    workbook = readExcelData(r'' + excel_file)
     ori_data = workbook.sheet_by_name(workbook.sheet_names()[0])
     info_name = ori_data.row_values(0)
     new_data = {}
@@ -78,32 +83,33 @@ def saveFile(file_path, file_name, data, filetype):
     output.close()
 
 
-# dealExcelDataToJson()
-# dealExcelDataToXml()
+# dealExcelDataToJson(PythonFile.testfile)
+# dealExcelDataToXml(PythonFile.testfile)
 # ---------------------------------------------------------------------------------------
 
 
-def selectPath(enter_path, folder_type):
-    if folder_type.get() == 1:
+def selectPath():
+    if pub_folder_select_type.get() == 1:
         path_ = askopenfilename(filetypes=[("Excel files", ".xlsx .xls")])
     else:
         path_ = askdirectory()
-    enter_path.set(path_)
+    pub_excel_path_input.set(path_)
+    if len(pub_excel_path_input.get()) != 0:
+        showLogInfo('当前选择的路径为:' + pub_excel_path_input.get())
     # if path_ != '':
     #     excel_file_name = os.path.basename(str(path_))
     #     excel_name = excel_file_name.split('.')[0]
     #     excel_type = excel_file_name.split('.')[1]
 
 
-def outputPath(output_path):
+def outputPath():
     outputFile_ = askdirectory()
-    output_path.set(outputFile_)
+    pub_data_path_output.set(outputFile_)
 
 
-def encryptFilePath(enter_path):
+def encryptFilePath():
     messagebox.showinfo('提示','暂未支持数据加密，敬请期待')
-    return
-    enter_path.set(askopenfilename())
+    # pub_encrypt_file_path.set(askopenfilename()) # 暂未使用
 
 
 def refreshencryptBtn(encrypt_btn, encrypt_btn_state):
@@ -113,55 +119,57 @@ def refreshencryptBtn(encrypt_btn, encrypt_btn_state):
 
 
 def showLogInfo(info):
-    toast_info_textUI.config(state=NORMAL)
-    realtime = time.strftime("%Y-%m-%d %H:%M:%S")
+    show_toast_Lab.config(state=NORMAL)
+    realtime = time.strftime("%H:%M:%S")
     text_var = realtime + '    ' + info + '\n'
-    toast_info_textUI.insert('end', text_var)
-    toast_info_textUI.see(END)
-    toast_info_textUI.config(state=DISABLED)
+    show_toast_Lab.insert('end', text_var)
+    show_toast_Lab.see(END)
+    show_toast_Lab.config(state=DISABLED)
 
 
-def startChangeExcel():
-    showLogInfo(123)
+def dataBoxItemClick():
+    showLogInfo(pub_data_convert_type.get())
 
-
-def comboxClick(datatype):
-    showLogInfo(datatype)
 
 
 def onGUI():
-    excel_path = StringVar()
-    folder_type = IntVar()
+    global pub_excel_path_input
+    pub_excel_path_input = StringVar()
+    global pub_folder_select_type
+    pub_folder_select_type = IntVar()
     Label(window, text="目标路径:").grid(row=0, column=0)
-    Entry(window, textvariable=excel_path, state='disabled').grid(row=0, column=1)
-    Button(window, text="浏览", command=lambda: selectPath(excel_path, folder_type)).grid(row=0, column=2)
-    Checkbutton(window, text='仅文件', variable=folder_type, onvalue=1, offvalue=0).grid(row=0, column=3)
+    Entry(window, textvariable=pub_excel_path_input, state='disabled').grid(row=0, column=1)
+    Button(window, text="浏览", command=lambda: selectPath()).grid(row=0, column=2)
+    Checkbutton(window, text='仅文件', variable=pub_folder_select_type, onvalue=1, offvalue=0).grid(row=0, column=3)
 
-    output_path = StringVar()
+    global pub_data_path_output
+    pub_data_path_output = StringVar()
     Label(window, text="输出路径:").grid(row=1, column=0)
-    Entry(window, textvariable=output_path, state='disabled').grid(row=1, column=1)
-    Button(window, text="浏览", command=lambda: outputPath(output_path)).grid(row=1, column=2)
+    Entry(window, textvariable=pub_data_path_output, state='disabled').grid(row=1, column=1)
+    Button(window, text="浏览", command=lambda: outputPath()).grid(row=1, column=2)
 
-    encrypt_file_path = StringVar()
+    global pub_encrypt_file_path
+    pub_encrypt_file_path = StringVar()
     encrypt_btn_state = IntVar()
     Label(window, text="加密文件:").grid(row=2, column=0)
-    Entry(window, textvariable=encrypt_file_path, state='disabled').grid(row=2, column=1)
-    encrypt_btn = Button(window, text="浏览", state='disabled', command=lambda: encryptFilePath(encrypt_file_path))
+    Entry(window, textvariable=pub_encrypt_file_path, state='disabled').grid(row=2, column=1)
+    encrypt_btn = Button(window, text="浏览", state='disabled', command=lambda: encryptFilePath())
     encrypt_btn.grid(row=2, column=2)
     Checkbutton(window, text='是否加密', variable=encrypt_btn_state, command=lambda: refreshencryptBtn(encrypt_btn, encrypt_btn_state), onvalue=1, offvalue=0).grid(row=2, column=3)
 
 
-    comvalue = StringVar()
-    comboxlist = ttk.Combobox(window, width=8, state='readonly', textvariable=comvalue)
-    comboxlist["values"] = ("json", "xml")
-    comboxlist.current(0)
-    comboxlist.grid(row=3, column=3)
+    global pub_data_convert_type
+    pub_data_convert_type = StringVar()
+    databoxList = ttk.Combobox(window, width=8, state='readonly', textvariable=pub_data_convert_type)
+    databoxList["values"] = ("json", "xml")
+    databoxList.current(0)
+    databoxList.grid(row=3, column=3)
 
-    Button(window, width=35, text="开始转换", command=lambda: comboxClick(comvalue.get())).grid(row=3, column=0, columnspan=3)
+    Button(window, width=35, text="开始转换", command=lambda: dataBoxItemClick()).grid(row=3, column=0, columnspan=3)
 
-    global toast_info_textUI
-    toast_info_textUI = Text(window, width=50, state=DISABLED)
-    toast_info_textUI.grid(row=4, column=0, columnspan=4)
+    global show_toast_Lab
+    show_toast_Lab = Text(window, width=50, state=DISABLED)
+    show_toast_Lab.grid(row=4, column=0, columnspan=4)
 
 
 def onCreateWindow():
@@ -174,8 +182,6 @@ def onCreateWindow():
     window.geometry()
     onGUI()
     window.mainloop()
-
-
 
 window = Tk()
 
