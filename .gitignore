@@ -7,5 +7,6 @@ build
 .idea
 logs
 dist
+__pycache__
 .spec
 
