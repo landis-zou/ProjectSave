@@ -6,4 +6,6 @@ obj
 build
 .idea
 logs
+__pycache__
+.spec
 
