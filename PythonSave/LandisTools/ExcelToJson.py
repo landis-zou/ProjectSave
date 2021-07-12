@@ -71,7 +71,7 @@ def dealExcelDataToJson(excel_file):
     workbook = readExcelData(r'' + excel_file)
     ori_data = workbook.sheet_by_name(workbook.sheet_names()[0])
     info_name = ori_data.row_values(0)
-    new_data = {}
+    new_data = []
 
     excel_name = os.path.basename(str(excel_file))
     file_name = excel_name.split('.')[0]
@@ -91,7 +91,8 @@ def dealExcelDataToJson(excel_file):
             count += 1
 
         if count == ori_data.ncols:
-            new_data[ori_data.row_values(data_nrow)[0]] = new_cow_data
+            new_data.append(new_cow_data)
+            # new_data[ori_data.row_values(data_nrow)[0]] = new_cow_data
 
     json_data = json.dumps(new_data, indent=4).encode("utf-8").decode('unicode_escape')
     saveFile(pub_data_path_output.get(), file_name, json_data, "json")
