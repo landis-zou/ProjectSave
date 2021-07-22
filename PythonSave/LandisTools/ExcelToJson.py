@@ -49,7 +49,7 @@ def dealExcelDataToXml(excel_file):
     for data_nrow in range(1, ori_data.nrows):
         if data_nrow == 0:
             continue
-        item = data_doc.createElement('node')
+        item = data_doc.createElement('item')
         count = 0
         for data_ncol in range(0, ori_data.ncols):
             key = ori_data.cell(0, data_ncol).value
