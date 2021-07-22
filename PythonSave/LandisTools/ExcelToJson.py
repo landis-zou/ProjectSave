@@ -47,21 +47,26 @@ def dealExcelDataToXml(excel_file):
     file_name = excel_name.split('.')[0]
 
     for data_nrow in range(1, ori_data.nrows):
-        item = data_doc.createElement('item')
+        if data_nrow == 0:
+            continue
+        item = data_doc.createElement('node')
         count = 0
         for data_ncol in range(0, ori_data.ncols):
             key = ori_data.cell(0, data_ncol).value
             value = ori_data.cell(data_nrow, data_ncol).value
             if data_ncol == 0:
                 if not is_number(value):
-                    break
+                    showLogInfo(excel_name + '表,首列：' + key + '应为数值, 不被转化', LabLv.ERROR)
+                    count += 1
+                    continue
             if len(str(value)) == 0:
-                showLogInfo(excel_name + '表,第' + str(data_nrow) + '行,' + key + '数值为空,请检查', LabLv.ERROR)
+                showLogInfo(excel_name + '表,第' + str(data_nrow + 1) + '行,' + key + '数值为空,请检查', LabLv.ERROR)
                 count +=1
                 continue
             item.setAttribute(key, str(value))
             count += 1
-        if count == ori_data.ncols:
+
+        if count == ori_data.ncols and bool(item._attrs):
             info.appendChild(item)
 
     saveFile(pub_data_path_output.get(), file_name, data_doc.toprettyxml(), "xml")
@@ -77,20 +82,24 @@ def dealExcelDataToJson(excel_file):
     file_name = excel_name.split('.')[0]
 
     for data_nrow in range(ori_data.nrows):
+        if data_nrow == 0:
+            continue
         count = 0
         new_cow_data = {}
         for data_ncol in ori_data.row_values(data_nrow):
             if count == 0:
                 if not is_number(data_ncol):
-                    break
+                    showLogInfo(excel_name + '表,首列：' + info_name[count] + '应为数值, 不被转化', LabLv.ERROR)
+                    count += 1
+                    continue
             if len(str(data_ncol)) == 0:
-                showLogInfo(excel_name + '表,第' + str(data_nrow) + '行,' + info_name[count] + '数值为空,请检查', LabLv.ERROR)
+                showLogInfo(excel_name + '表,第' + str(data_nrow + 1) + '行,' + info_name[count] + '数值为空,请检查', LabLv.ERROR)
                 count += 1
                 continue
             new_cow_data[info_name[count]] = str(data_ncol)
             count += 1
 
-        if count == ori_data.ncols:
+        if count == ori_data.ncols and len(new_cow_data) > 0:
             new_data.append(new_cow_data)
             # new_data[ori_data.row_values(data_nrow)[0]] = new_cow_data
 
