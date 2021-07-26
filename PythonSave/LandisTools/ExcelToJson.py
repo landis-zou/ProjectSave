@@ -17,7 +17,7 @@ from enum import Enum
 from tkinter.filedialog import (askopenfilename, askdirectory)
 
 # -------------------------------- 公共变量 ---------------------------------------
-show_toast_Lab = None                   # UI上界面显示Log日志
+show_toast_Lab = None                       # UI上界面显示Log日志
 pub_folder_select_type = None               # 文件类型选择,是文件还是文件夹整个转化
 pub_excel_path_input = None                 # Excel输入路径
 pub_data_path_output = None                 # 转化文件输出路径
@@ -56,9 +56,9 @@ def dealExcelDataToXml(excel_file):
             value = ori_data.cell(data_nrow, data_ncol).value
             if data_ncol == 0:
                 if not is_number(value):
-                    showLogInfo(excel_name + '表,首列：' + key + '应为数值, 不被转化', LabLv.ERROR)
+                    showLogInfo(excel_name + '表,首列：' + key + '应为数值, 整行跳过', LabLv.ERROR)
                     count += 1
-                    continue
+                    break
             if len(str(value)) == 0:
                 showLogInfo(excel_name + '表,第' + str(data_nrow + 1) + '行,' + key + '数值为空,请检查', LabLv.ERROR)
                 count +=1
@@ -76,7 +76,7 @@ def dealExcelDataToJson(excel_file):
     workbook = readExcelData(r'' + excel_file)
     ori_data = workbook.sheet_by_name(workbook.sheet_names()[0])
     info_name = ori_data.row_values(0)
-    new_data = []
+    new_data = {}
 
     excel_name = os.path.basename(str(excel_file))
     file_name = excel_name.split('.')[0]
@@ -89,9 +89,9 @@ def dealExcelDataToJson(excel_file):
         for data_ncol in ori_data.row_values(data_nrow):
             if count == 0:
                 if not is_number(data_ncol):
-                    showLogInfo(excel_name + '表,首列：' + info_name[count] + '应为数值, 不被转化', LabLv.ERROR)
+                    showLogInfo(excel_name + '表,首列：' + info_name[count] + '应为数值, 整行跳过', LabLv.ERROR)
                     count += 1
-                    continue
+                    break
             if len(str(data_ncol)) == 0:
                 showLogInfo(excel_name + '表,第' + str(data_nrow + 1) + '行,' + info_name[count] + '数值为空,请检查', LabLv.ERROR)
                 count += 1
@@ -100,8 +100,8 @@ def dealExcelDataToJson(excel_file):
             count += 1
 
         if count == ori_data.ncols and len(new_cow_data) > 0:
-            new_data.append(new_cow_data)
-            # new_data[ori_data.row_values(data_nrow)[0]] = new_cow_data
+            # new_data.append(new_cow_data) # 沈哥项目需要更改为数组模式，但大多数还是字典模式
+            new_data[ori_data.row_values(data_nrow)[0]] = new_cow_data
 
     json_data = json.dumps(new_data, indent=4).encode("utf-8").decode('unicode_escape')
     saveFile(pub_data_path_output.get(), file_name, json_data, "json")
@@ -178,6 +178,12 @@ def encryptFilePath():
     # pub_encrypt_file_path.set(os.path.normpath(askopenfilename())) # 暂未使用
 
 
+def manualPathState(inputEnter, outputEnter, manualBtnType):
+    state = NORMAL if manualBtnType.get() == 1 else DISABLED
+    inputEnter['state'] = state
+    outputEnter['state'] = state
+
+
 def refreshEncryptBtn(encrypt_btn, encrypt_btn_state):
     state = NORMAL if encrypt_btn_state.get() == 1 else DISABLED
     encrypt_btn['state'] = state
@@ -193,6 +199,8 @@ def showLogInfo(msg, lab_lv=LabLv.INFO):
 
 
 def dataBoxItemClick():
+    showLogInfo(pub_excel_path_input.get())
+    showLogInfo(pub_data_path_output.get())
     if os.path.isdir(pub_excel_path_input.get()):
         for root, ds, fs in os.walk(pub_excel_path_input.get()):
             for fileName in fs:
@@ -225,15 +233,21 @@ def onGUI():
     global pub_folder_select_type
     pub_folder_select_type = IntVar()
     Label(window, text="目标路径:").grid(row=0, column=0)
-    Entry(window, textvariable=pub_excel_path_input, state='disabled').grid(row=0, column=1)
+    inputEntry = Entry(window, textvariable=pub_excel_path_input, state='disabled')
+    inputEntry.grid(row=0, column=1)
     Button(window, text="浏览", command=lambda: selectPath()).grid(row=0, column=2)
     Checkbutton(window, text='仅读文件', variable=pub_folder_select_type, onvalue=1, offvalue=0).grid(row=0, column=3)
 
     global pub_data_path_output
     pub_data_path_output = StringVar()
+    manual_enter_path = IntVar()
     Label(window, text="输出路径:").grid(row=1, column=0)
-    Entry(window, textvariable=pub_data_path_output, state='disabled').grid(row=1, column=1)
+    outputEntry = Entry(window, textvariable=pub_data_path_output, state='disabled')
+    outputEntry.grid(row=1, column=1)
     Button(window, text="浏览", command=lambda: outputPath()).grid(row=1, column=2)
+
+    Checkbutton(window, text='手动路径', variable=manual_enter_path,  onvalue=1, command=lambda: manualPathState(inputEntry, outputEntry, manual_enter_path), offvalue=0).grid(row=1, column=3)
+
 
     global pub_encrypt_file_path
     pub_encrypt_file_path = StringVar()
@@ -261,7 +275,7 @@ def onGUI():
         show_toast_Lab.tag_config(str(lv), foreground=lv.value)
 
 def onCreateWindow():
-    window.title("Table Tool")
+    window.title("Table Tool  制作人：Landis")
     # -------- 状态栏显示的应用图标
     iconFile = resource_path(os.path.join('Resources', 'GetRight.ico'))
     my_ppid = 'company.product.version'
