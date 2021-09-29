@@ -232,29 +232,28 @@ def onGUI():
     pub_excel_path_input = StringVar()
     global pub_folder_select_type
     pub_folder_select_type = IntVar()
-    Label(window, text="目标路径:").grid(row=0, column=0)
+    Label(window, text='目标路径:').grid(row=0, column=0)
     inputEntry = Entry(window, textvariable=pub_excel_path_input, state='disabled')
     inputEntry.grid(row=0, column=1)
-    Button(window, text="浏览", command=lambda: selectPath()).grid(row=0, column=2)
+    Button(window, text='浏览', command=lambda: selectPath()).grid(row=0, column=2)
     Checkbutton(window, text='仅读文件', variable=pub_folder_select_type, onvalue=1, offvalue=0).grid(row=0, column=3)
 
     global pub_data_path_output
     pub_data_path_output = StringVar()
     manual_enter_path = IntVar()
-    Label(window, text="输出路径:").grid(row=1, column=0)
+    Label(window, text='输出路径:').grid(row=1, column=0)
     outputEntry = Entry(window, textvariable=pub_data_path_output, state='disabled')
     outputEntry.grid(row=1, column=1)
-    Button(window, text="浏览", command=lambda: outputPath()).grid(row=1, column=2)
+    Button(window, text='浏览', command=lambda: outputPath()).grid(row=1, column=2)
 
     Checkbutton(window, text='手动路径', variable=manual_enter_path,  onvalue=1, command=lambda: manualPathState(inputEntry, outputEntry, manual_enter_path), offvalue=0).grid(row=1, column=3)
-
 
     global pub_encrypt_file_path
     pub_encrypt_file_path = StringVar()
     encrypt_btn_state = IntVar()
-    Label(window, text="加密文件:").grid(row=2, column=0)
+    Label(window, text='加密文件:').grid(row=2, column=0)
     Entry(window, textvariable=pub_encrypt_file_path, state='disabled').grid(row=2, column=1)
-    encrypt_btn = Button(window, text="浏览", state='disabled', command=lambda: encryptFilePath())
+    encrypt_btn = Button(window, text='浏览', state='disabled', command=lambda: encryptFilePath())
     encrypt_btn.grid(row=2, column=2)
     Checkbutton(window, text='是否加密', variable=encrypt_btn_state, command=lambda: refreshEncryptBtn(encrypt_btn, encrypt_btn_state), onvalue=1, offvalue=0).grid(row=2, column=3)
 
@@ -263,13 +262,13 @@ def onGUI():
     dataBoxList = ttk.Combobox(window, width=8, state='readonly', textvariable=pub_data_convert_type)
     dataBoxList["values"] = pub_excel_change_type
     dataBoxList.current(0)
-    dataBoxList.grid(row=3, column=3)
+    dataBoxList.grid(row=4, column=3)
 
-    Button(window, width=35, text="开始转换", command=lambda: dataBoxItemClick()).grid(row=3, column=0, columnspan=3)
+    Button(window, width=35, text="开始转换", command=lambda: dataBoxItemClick()).grid(row=4, column=0, columnspan=3)
 
     global show_toast_Lab
     show_toast_Lab = Text(window, width=50, state=DISABLED)
-    show_toast_Lab.grid(row=4, column=0, columnspan=4)
+    show_toast_Lab.grid(row=5, column=0, columnspan=4)
     # ------提前注册文本颜色
     for lv in LabLv:
         show_toast_Lab.tag_config(str(lv), foreground=lv.value)

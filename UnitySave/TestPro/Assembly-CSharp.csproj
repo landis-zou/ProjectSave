@@ -53,7 +53,10 @@
     <UnityVersion>2020.3.9f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Assets\Test.cs" />
+    <Compile Include="Assets\Script\Utils\UserLocalData.cs" />
+    <Compile Include="Assets\Script\Utils\DataCoder.cs" />
+    <Compile Include="Assets\Script\TestScript.cs" />
+    <Compile Include="Assets\Script\DataInfo\GlobeSetting.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
