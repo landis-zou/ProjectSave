@@ -274,7 +274,7 @@ def onGUI():
         show_toast_Lab.tag_config(str(lv), foreground=lv.value)
 
 def onCreateWindow():
-    window.title("Table Tool  制作人：Landis")
+    window.title("Table Tool  研发：Landis")
     # -------- 状态栏显示的应用图标
     iconFile = resource_path(os.path.join('Resources', 'GetRight.ico'))
     my_ppid = 'company.product.version'
