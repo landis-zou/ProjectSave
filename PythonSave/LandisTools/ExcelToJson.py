@@ -31,8 +31,8 @@ class LabLv(Enum):
     INFO = 'black'
     WARN = 'orange'
     ERROR = 'red'
-    SUCCESS = 'green'
-    SKIP = 'blue'
+    SUCCESS = 'lightgreen'
+    SKIP = 'lawngreen'
 # -------------------------------- ExcelToJson Deal Tool ---------------------------------------
 
 def dealExcelDataToXml(excel_file):
@@ -190,12 +190,13 @@ def refreshEncryptBtn(encrypt_btn, encrypt_btn_state):
 
 
 def showLogInfo(msg, lab_lv=LabLv.INFO):
-    show_toast_Lab.config(state=NORMAL)
-    realtime = time.strftime("%H:%M:%S")
-    text_var = realtime + '    ' + msg + '\n'
-    show_toast_Lab.insert('end', text_var, str(lab_lv))
-    show_toast_Lab.see(END)
-    show_toast_Lab.config(state=DISABLED)
+    if msg:
+        show_toast_Lab.config(state=NORMAL)
+        realtime = time.strftime("%H:%M:%S")
+        text_var = realtime + '    ' + msg + '\n'
+        show_toast_Lab.insert('end', text_var, str(lab_lv))
+        show_toast_Lab.see(END)
+        show_toast_Lab.config(state=DISABLED)
 
 
 def dataBoxItemClick():
