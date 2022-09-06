@@ -1,6 +1,6 @@
 #!/usr/bin/python3
-import math
 
+import math
 
 # ----------------------------- 注释方式 ----------------------------------------
 """
@@ -543,5 +543,53 @@ os功能一，判断路径文件是否存在
 # print(a)
 
 """
+数据加密1：MD5
+使用范围:获取两段同为MD5加密数据进行对比,如设备号或者用户帐号对比等
+纯加密：不适用Excel数据加密,后续前端解密获取对应数据
+"""
+# import hashlib
+#
+# h = hashlib.md5()
+# str = 'boboadmin'
+# h.update(str.encode())
+# msg = h.hexdigest()
+# print(msg)
 
 """
+数据加密：SHA1
+作用效果与MD5一致
+但是由于时间换取安全性,因此比MD5更加安全
+"""
+# import hashlib
+#
+# sha = hashlib.sha1()
+# data = 'Landis is cool'
+# sha.update(data.encode('utf-8'))
+# sha_data = sha.hexdigest()
+# print(sha_data)
+
+"""
+数据加密：Base64
+可方式是为像是加密的编码,所以才称base64是伪加密,知道若有对应字符编码很容易被破解
+因此若知道对应的字符编码因此也容易被破解,但若不知道,强行使用decode会报错
+所以界面若非知道对应字符编码,不可轻易使用decode转化
+"""
+import base64
+
+str = '我们一起打豆豆'
+str = str.encode('utf-8')
+# 加密
+bs64 = base64.b64encode(str)
+print(bs64)
+# 解密
+debs64 = base64.b64decode(bs64).decode('utf-8')
+print(debs64)
+
+"""
+数据加密
+"""
+
+
+
+
+

@@ -77,6 +77,8 @@ def dealExcelDataToJson(excel_file):
     ori_data = workbook.sheet_by_name(workbook.sheet_names()[0])
     info_name = ori_data.row_values(0)
     new_data = {}
+    # 沈哥项目需要更改为数组模式，但大多数还是字典模式
+    # new_data = []
 
     excel_name = os.path.basename(str(excel_file))
     file_name = excel_name.split('.')[0]
@@ -100,8 +102,9 @@ def dealExcelDataToJson(excel_file):
             count += 1
 
         if count == ori_data.ncols and len(new_cow_data) > 0:
-            # new_data.append(new_cow_data) # 沈哥项目需要更改为数组模式，但大多数还是字典模式
-            new_data[ori_data.row_values(data_nrow)[0]] = new_cow_data
+            new_data[ori_data.row_values(data_nrow)[0]] = str(new_cow_data)
+            # 沈哥项目需要更改为数组模式，但大多数还是字典模式
+            # new_data.append(new_cow_data)
 
     json_data = json.dumps(new_data, indent=4).encode("utf-8").decode('unicode_escape')
     saveFile(pub_data_path_output.get(), file_name, json_data, "json")
@@ -275,7 +278,7 @@ def onGUI():
         show_toast_Lab.tag_config(str(lv), foreground=lv.value)
 
 def onCreateWindow():
-    window.title("Table Tool  研发：Landis")
+    window.title("Table Tool  制作：Landis")
     # -------- 状态栏显示的应用图标
     iconFile = resource_path(os.path.join('Resources', 'GetRight.ico'))
     my_ppid = 'company.product.version'
