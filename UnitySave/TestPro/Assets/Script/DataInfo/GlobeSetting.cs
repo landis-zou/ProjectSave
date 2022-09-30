@@ -6,3 +6,9 @@ class GlobeSetting
 {
     public const string USER_INFO = "userinfo";
 }
+
+
+struct UserInfoData
+{
+
+};

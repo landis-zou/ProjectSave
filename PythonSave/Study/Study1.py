@@ -571,19 +571,19 @@ os功能一，判断路径文件是否存在
 """
 数据加密：Base64
 可方式是为像是加密的编码,所以才称base64是伪加密,知道若有对应字符编码很容易被破解
-因此若知道对应的字符编码因此也容易被破解,但若不知道,强行使用decode会报错
-所以界面若非知道对应字符编码,不可轻易使用decode转化
+因此若知道对应的字符编码因此也容易被破解,但若不知道,强行使用decode解密会报错
+所以前面若非知道对应字符编码,不可轻易使用decode转化
 """
-import base64
-
-str = '我们一起打豆豆'
-str = str.encode('utf-8')
-# 加密
-bs64 = base64.b64encode(str)
-print(bs64)
-# 解密
-debs64 = base64.b64decode(bs64).decode('utf-8')
-print(debs64)
+# import base64
+#
+# str = '我们一起打豆豆'
+# str = str.encode('utf-8')
+# # 加密
+# bs64 = base64.b64encode(str)
+# print(bs64)
+# # 解密
+# debs64 = base64.b64decode(bs64).decode('utf-8')
+# print(debs64)
 
 """
 数据加密

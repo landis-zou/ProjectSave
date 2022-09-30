@@ -17,16 +17,16 @@ SpriteAtlas:
       textureCompression: 0
       filterMode: 1
       generateMipMaps: 0
-      readable: 1
+      readable: 0
       crunchedCompression: 0
       sRGB: 1
     platformSettings:
     - serializedVersion: 3
-      m_BuildTarget: Standalone
+      m_BuildTarget: DefaultTexturePlatform
       m_MaxTextureSize: 2048
       m_ResizeAlgorithm: 0
-      m_TextureFormat: 12
-      m_TextureCompression: 1
+      m_TextureFormat: -1
+      m_TextureCompression: 2
       m_CompressionQuality: 50
       m_CrunchedCompression: 0
       m_AllowsAlphaSplitting: 0
@@ -35,7 +35,7 @@ SpriteAtlas:
       m_ForceMaximumCompressionQuality_BC6H_BC7: 0
     packingSettings:
       serializedVersion: 2
-      padding: 4
+      padding: 2
       blockOffset: 1
       allowAlphaSplitting: 0
       enableRotation: 1
@@ -44,7 +44,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: af911398471a1944baae548b0ee2ccf0, type: 3}
-    totalSpriteSurfaceArea: 126424
+    totalSpriteSurfaceArea: 864002
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
@@ -52,15 +52,15 @@ SpriteAtlas:
   m_PackedSprites:
   - {fileID: 21300000, guid: 80018db169f5cc247946afd76cce8e13, type: 3}
   - {fileID: 21300000, guid: 6dc2d9e25c9644d448c927fe49ecd03f, type: 3}
+  - {fileID: 21300000, guid: 9a473c033dae43e478c6a0bab6e7c512, type: 3}
   - {fileID: 21300000, guid: 4097f579c6bfe694781696dfe5f26cbc, type: 3}
   - {fileID: 21300000, guid: 3ba7905a69d108c4ab28a27aaa607d6b, type: 3}
-  - {fileID: 21300000, guid: e474e39bcb99aa24a82ac016e53a26fb, type: 3}
   m_PackedSpriteNamesToIndex:
   - pro_hero_pur
   - icon_bk
+  - modal_01
   - achievement_progress_bk
   - achievement_progress
-  - achievement_bk
   m_RenderDataMap: {}
   m_Tag: achievement
   m_IsVariant: 0
