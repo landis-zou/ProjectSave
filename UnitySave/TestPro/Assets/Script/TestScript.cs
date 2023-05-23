@@ -1,14 +1,16 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.U2D;
 using UnityEngine.UI;
+using Newtonsoft.Json;
+using System.IO;
 
 public class TestScript : MonoBehaviour
 {
     public Button mButton;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -34,8 +36,40 @@ public class TestScript : MonoBehaviour
 
     void test(int value)
     {
-        value = 2;
+        var mPath = Application.persistentDataPath + "/" + GlobeSetting.USER_INFO;
+
+        Debug.Log(Application.persistentDataPath);
+
+        TestJsonData data = new TestJsonData();
+
+        data.userid = "900625";
+        data.userdata.Add("username", "KK");
+        data.userdata.Add("useName", "Ekey");
+        data.nickname = "Landis";
+        data.testMap.Add(TestEnum.TestCount, 789);
+        data.testMap.Add(TestEnum.TestCount2, "so");
+        //data.testMap.Add("7799", "Cool");
+
+
+        var a = JsonConvert.SerializeObject(data);
+
+        var b = JsonConvert.DeserializeObject<TestJsonData>(a);
+
+
+        var c = b.testMap[TestEnum.TestCount];
+
+
+        TestData data2;
+        data2.TestString = "Landis";
+
+        if (File.Exists(mPath))
+        {
+            File.WriteAllText(mPath, a);
+        }
+
+
     }
+
 }
 
 /// <summary>
@@ -48,15 +82,17 @@ class TestJsonData
     public string userid;
     public string nickname;
     public Hashtable userdata;
-    public Dictionary<jvalue, jvalue> testMap;
+    public Dictionary<TestEnum, object> testMap;
+
 
     public TestJsonData()
     {
         userid = "";
         nickname = "";
         userdata = new Hashtable();
-        testMap = new Dictionary<jvalue, jvalue>();
+        testMap = new Dictionary<TestEnum, object>();
     }
+    
 };
 
 /// <summary>
@@ -69,4 +105,12 @@ struct TestData
     public string TestString;
     public float TestFloat;
 }
+
+enum TestEnum
+{
+    TestCount,
+    TestCount2,
+}
+
+
 
